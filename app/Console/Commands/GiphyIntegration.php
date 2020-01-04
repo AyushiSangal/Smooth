@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 use GuzzleHttp\Client;
 use Giphy;
+use GuzzleHttp\Exception\GuzzleException;
 
 use Illuminate\Console\Command;
 
@@ -42,21 +43,24 @@ class GiphyIntegration extends Command
         //$giphys   = Giphy::search('cat');
         $arguement = $this->arguments();
         
-        $api_key    = env('GIPHY_API_KEY');
-        $client =  new Client();
-        $url = 'https://api.giphy.com/v1/gifs/'.$arguement['endpoint'].'?q='.$arguement['term'];
-
-       // dd($url);
-        $res = $client->request('GET',  $url, [
-        'headers'       => [
-        'Accept'        => 'application/json',
-        'Content-type'  => 'application/json',
-        'apikey'        =>  $api_key,
-        'Content-Type'  => 'application/xml',
-        ]
-       ]);
-        $giphy = json_decode($res->getBody()->getContents());
-       // $this->info($giphy);
+        $api_key = env('GIPHY_API_KEY');
+        $client  =  new Client();
+        try{
+            $url     = 'https://api.giphy.com/v1/gifs/'.$arguement['endpoint'].'?q='.$arguement['term'];
+            $res     = $client->request('GET',  $url, [
+            'headers'       => [
+            'Accept'        => 'application/json',
+            'Content-type'  => 'application/json',
+            'apikey'        =>  $api_key,
+            'Content-Type'  => 'application/xml',
+            ]
+            ]);
+       
+            $giphy = json_decode($res->getBody()->getContents());
+            $this->info('Congrates you have successfully integrated giphy API');
+        }catch(GuzzleException $e){
+            return $e;
+        }
         
     }
 }

@@ -34,8 +34,8 @@ class GiphyTest extends TestCase
         'Content-Type'  => 'application/xml',
         ]
        ]);
-        $giphy = json_decode($res->getBody()->getContents());
-        $this->assertEquals('OK', $giphy->meta->msg);
+        
+        $this->assertEquals(200, $res->getStatusCode());
     }
  
 }
